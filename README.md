@@ -104,7 +104,7 @@ cd LibrarySeatReservation
 # 2. 还原 NuGet 包
 dotnet restore
 
-# 3. 首次运行（自动执行迁移 + 种子数据）
+# 3. 首次运行（自动建库 + 种子数据）
 dotnet run
 ```
 

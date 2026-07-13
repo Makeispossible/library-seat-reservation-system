@@ -126,7 +126,7 @@ chore(project): 创建 .sln 和项目骨架
 | T0-05 | 创建 Models（StudentUser, Seat, Reservation, SeatDisplay, ErrorViewModel） | 编译通过 |
 | T0-06 | 创建 AppDbContext + DbInitializer（含种子数据 5 学生 + 12 座位） | `EnsureCreated` 可建库 |
 | T0-07 | 配置 Session 服务 + 中间件 | 应用可写读 Session |
-| T0-08 | 首次 EF Core 迁移 + 建库建表 | 数据库中生成了 3 张表 |
+| T0-08 | 首次 EF Core 建库建表（EnsureCreated + 种子数据） | 数据库中生成了 3 张表 |
 | T0-09 | 首次 `dotnet run` 验证全流程 | 启动 → 建库 → 种子数据 → 浏览器页面可达 |
 | T0-10 | 本地仓库初始化 + 首次提交 + 推送到远端 | GitHub 仓库可见首次提交 |
 
