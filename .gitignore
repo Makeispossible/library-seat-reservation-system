@@ -1,0 +1,45 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Visual Studio
+.vs/
+*.sdf
+*.opensdf
+*.opendb
+*.cachefile
+*.VC.db
+*.VC.VC.opendb
+
+## Rider
+.idea/
+*.sln.iml
+
+## Node
+node_modules/
+
+## Python
+__pycache__/
+*.pyc
+*.pyo
+
+## OS files
+Thumbs.db
+.DS_Store
+
+## OpenCode
+.omo/
+.opencode/
+
+## Node.js (dev environment)
+nodejs/
+
+## Python (dev environment)
+python311/
+
+## Project specific
+SecondClassroomManager/
