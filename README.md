@@ -103,9 +103,9 @@ dotnet run --project src/LibrarySeatReservation.Web
 |------|------|------|
 | 项目骨架 | ✅ 已完成 | .sln + .csproj + NuGet + Program.cs + appsettings |
 | 数据库 | ✅ 已完成 | EF Core Code First 建 3 表 + 4 索引 + 种子数据 |
-| 体验账号切换 | 🔲 Controller+View 就绪 | 需 Sprint 1 dotnet run 验证 |
-| 座位列表 + 筛选 | 🔲 Controller+View 就绪 | 需 Sprint 1 数据验证 |
-| 座位详情 + 时段 | 🔲 Controller+View 就绪 | 需 Sprint 1 验证 |
+| 体验账号切换 | ✅ 已验证通过 | Session 持久化正常，5 学生可切换 |
+| 座位列表 + 筛选 | ✅ 已验证通过 | 12 座位网格 + 区域/楼层筛选正常 |
+| 座位详情 + 时段 | ✅ 已验证通过 | 详情渲染 + 预约按钮守卫正常 |
 | 预约提交 + 冲突校验 | 🔲 Controller+View 就绪 | 需 Sprint 2 验证 |
 | 我的预约 + 取消 | 🔲 Controller+View 就绪 | 需 Sprint 2 验证 |
 | 管理员登录 | 🔲 Controller+View 就绪 | 需 Sprint 3 验证 |
@@ -148,6 +148,6 @@ dotnet ef database update --project src/LibrarySeatReservation.Web
 
 ## 当前阶段
 
-**Sprint 0 — 开发起步与项目骨架，已完成。** 所有 Controller、View、Model 源码已就绪，数据库已建库建表，构建零错误。
+**Sprint 1 — 用户端主链路验证，已完成。** 三页（首页 + 座位列表 + 座位详情）全部 dotnet run 验证通过，体验账号切换可用，筛选/详情/预约按钮守卫正常。
 
-下一阶段：Sprint 1 — 用户端首页 + 座位列表 + 座位详情。（`dotnet run` 验证 + 数据脱敏）
+下一阶段：Sprint 2 — 预约提交 + 我的预约 + 取消预约。（预约流程全链路开发）

@@ -30,13 +30,16 @@ public class HomeController : Controller
     /// 切换体验账号 — POST 接收 userId，写入 Session
     /// </summary>
     [HttpPost]
-    public IActionResult SwitchUser(int userId)
+    public IActionResult SwitchUser(int? userId)
     {
-        var user = _db.StudentUsers.FirstOrDefault(u => u.Id == userId);
-        if (user != null)
+        if (userId.HasValue)
         {
-            HttpContext.Session.SetInt32("UserId", user.Id);
-            HttpContext.Session.SetString("UserName", user.Name);
+            var user = _db.StudentUsers.FirstOrDefault(u => u.Id == userId.Value);
+            if (user != null)
+            {
+                HttpContext.Session.SetInt32("UserId", user.Id);
+                HttpContext.Session.SetString("UserName", user.Name);
+            }
         }
 
         return RedirectToAction("Index");
