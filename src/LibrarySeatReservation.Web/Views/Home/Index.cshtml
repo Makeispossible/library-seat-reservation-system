@@ -1,0 +1,81 @@
+﻿@{
+    ViewData["Title"] = "首页";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="text-center mb-4">
+            <h1 class="display-6 fw-bold" style="color:var(--color-primary);">图书馆座位预约</h1>
+            <p class="text-secondary">选择体验账号，快速预约座位</p>
+        </div>
+
+        <!-- 当前用户状态卡 -->
+        <div class="card-custom-static mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    @if (ViewBag.CurrentUser != "未选择")
+                    {
+                        <h5 class="mb-1">你好，<strong>@ViewBag.CurrentUser</strong> 👋</h5>
+                        <p class="text-secondary mb-0" style="font-size:14px;">已选择体验账号，可前往座位列表预约座位</p>
+                    }
+                    else
+                    {
+                        <h5 class="mb-1">欢迎使用 🏛️</h5>
+                        <p class="text-secondary mb-0" style="font-size:14px;">请从上方导航栏选择体验账号后开始预约</p>
+                    }
+                </div>
+                <div>
+                    @if (ViewBag.CurrentUser != "未选择")
+                    {
+                        <a class="btn btn-custom-primary" asp-controller="Seats" asp-action="Index">查看座位</a>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- 体验账号列表 -->
+        <div class="card-custom-static">
+            <h5 class="section-title-sm mb-3">体验账号</h5>
+            <p class="text-secondary" style="font-size:14px;margin-bottom:16px;">
+                点击下方账号或上方下拉框切换身份，所有账号均为体验用途，无需密码。
+            </p>
+            <div class="row g-2">
+                @if (ViewBag.StudentUsers != null)
+                {
+                    foreach (var user in ViewBag.StudentUsers)
+                    {
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <form asp-controller="Home" asp-action="SwitchUser" method="post">
+                                <input type="hidden" name="userId" value="@user.Id" />
+                                <button type="submit" class="btn btn-custom-outline btn-custom-block"
+                                        style="padding:12px 8px;font-size:14px;">
+                                    @user.Name
+                                </button>
+                            </form>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- 快捷入口 -->
+        <div class="row mt-4 g-3">
+            <div class="col-md-6">
+                <div class="card-custom-static text-center">
+                    <div style="font-size:32px;margin-bottom:8px;">🪑</div>
+                    <h6>浏览座位</h6>
+                    <p class="text-secondary" style="font-size:13px;">查看各区域座位空闲情况</p>
+                    <a class="btn btn-custom-primary btn-custom-sm" asp-controller="Seats" asp-action="Index">去看看</a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card-custom-static text-center">
+                    <div style="font-size:32px;margin-bottom:8px;">📋</div>
+                    <h6>我的预约</h6>
+                    <p class="text-secondary" style="font-size:13px;">查看和取消我的预约记录</p>
+                    <a class="btn btn-custom-primary btn-custom-sm" asp-controller="Reservation" asp-action="My">去看看</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

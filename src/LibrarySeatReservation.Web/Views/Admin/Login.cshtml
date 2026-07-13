@@ -1,0 +1,35 @@
+@{
+    ViewData["Title"] = "管理员登录";
+    Layout = "_Layout";
+}
+
+<div class="login-card">
+    <div class="card-custom-static">
+        <div class="text-center mb-4">
+            <div style="font-size:40px;margin-bottom:8px;">🔐</div>
+            <h4>管理员登录</h4>
+            <p class="text-secondary" style="font-size:14px;">请输入管理员账号和密码</p>
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-custom-error mb-3">@ViewBag.Error</div>
+        }
+
+        <form method="post" asp-controller="Admin" asp-action="Login">
+            <div class="mb-3">
+                <label class="form-label-custom">账号</label>
+                <input type="text" name="username" class="form-custom w-100" placeholder="admin" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label-custom">密码</label>
+                <input type="password" name="password" class="form-custom w-100" placeholder="••••••" required />
+            </div>
+            <button type="submit" class="btn btn-custom-primary w-100">登 录</button>
+        </form>
+
+        <div class="text-center mt-3">
+            <a href="/" class="text-secondary" style="font-size:13px;">返回首页</a>
+        </div>
+    </div>
+</div>

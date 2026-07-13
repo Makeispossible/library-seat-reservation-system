@@ -1,0 +1,45 @@
+@{
+    ViewData["Title"] = "预约座位";
+    var seat = ViewBag.Seat as Seat;
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card-custom-static">
+            <h4 class="section-title-sm mb-3">预约座位</h4>
+
+            @if (seat != null)
+            {
+                <div class="mb-3">
+                    <p><strong>座位：</strong>@seat.SeatNumber</p>
+                    <p><strong>位置：</strong>@seat.Area · @seat.Floor</p>
+                </div>
+
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-custom-error mb-3">@ViewBag.Error</div>
+                }
+
+                <form method="post" asp-controller="Reservation" asp-action="Create" asp-route-id="@seat.Id">
+                    <div class="mb-3">
+                        <label class="form-label-custom">开始时间</label>
+                        <input type="time" name="startTime" class="form-custom w-100" value="08:00"
+                               min="08:00" max="21:30" step="1800" required />
+                        <div class="form-custom-error">可选时段：08:00 ~ 22:00（30分钟粒度）</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label-custom">结束时间</label>
+                        <input type="time" name="endTime" class="form-custom w-100" value="09:00"
+                               min="08:30" max="22:00" step="1800" required />
+                        <div class="form-custom-error">预约时长：最短30分钟，最长4小时</div>
+                    </div>
+                    <button type="submit" class="btn btn-custom-primary w-100">提交预约</button>
+                </form>
+            }
+        </div>
+
+        <div class="mt-3">
+            <a class="btn btn-custom-outline" asp-controller="Seats" asp-action="Detail" asp-route-id="@seat?.Id">← 返回详情</a>
+        </div>
+    </div>
+</div>

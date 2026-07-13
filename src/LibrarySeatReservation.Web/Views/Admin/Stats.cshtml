@@ -1,0 +1,76 @@
+@{
+    ViewData["Title"] = "统计";
+    Layout = "_AdminLayout";
+}
+
+<h4 class="section-title mb-4">数据统计</h4>
+
+<div class="row g-4 mb-4">
+    <!-- 卡片 1：座位总数 -->
+    <div class="col-md-4">
+        <div class="stats-card">
+            <div class="stats-number">@ViewBag.TotalSeats</div>
+            <div class="stats-label">座位总数</div>
+        </div>
+    </div>
+    <!-- 卡片 2：今日预约数 -->
+    <div class="col-md-4">
+        <div class="stats-card">
+            <div class="stats-number">@ViewBag.TodayReservations</div>
+            <div class="stats-label">今日预约数</div>
+        </div>
+    </div>
+    <!-- 卡片 3：使用率 -->
+    <div class="col-md-4">
+        <div class="stats-card">
+            <div class="stats-number">
+                @ViewBag.UsageRate<span class="stats-unit">%</span>
+            </div>
+            <div class="stats-label">座位使用率</div>
+        </div>
+    </div>
+</div>
+
+<!-- 使用率进度条 -->
+<div class="card-custom-static mb-4">
+    <h5 class="section-title-sm mb-2">今日使用率</h5>
+    <div class="progress-custom" style="height:20px;">
+        <div class="progress-bar-fill" style="width:@(ViewBag.UsageRate)%;height:100%;">
+            @if (ViewBag.UsageRate > 15)
+            {
+                <text>@ViewBag.UsageRate%</text>
+            }
+        </div>
+    </div>
+    @if (ViewBag.UsageRate <= 15)
+    {
+        <div class="text-end mt-1" style="font-size:13px;color:var(--color-text-secondary);">@ViewBag.UsageRate%</div>
+    }
+</div>
+
+<!-- 区域分布 -->
+<div class="card-custom-static">
+    <h5 class="section-title-sm mb-3">各区域座位分布</h5>
+    <div class="table-responsive-custom">
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>区域</th>
+                    <th>座位数量</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (ViewBag.AreaDistribution != null)
+                {
+                    foreach (var item in ViewBag.AreaDistribution)
+                    {
+                        <tr>
+                            <td>@item.Area</td>
+                            <td><strong>@item.Count</strong> 个</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

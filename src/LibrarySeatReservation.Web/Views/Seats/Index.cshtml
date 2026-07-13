@@ -1,0 +1,76 @@
+@model List<SeatDisplay>
+@{
+    ViewData["Title"] = "座位列表";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="section-title mb-0">座位列表</h4>
+</div>
+
+<!-- 筛选表单 -->
+<form method="get" asp-controller="Seats" asp-action="Index" class="row g-2 mb-4">
+    <div class="col-auto">
+        <select name="area" class="form-select-custom" onchange="this.form.submit()">
+            <option value="全部">全部区域</option>
+            @if (ViewBag.Areas != null)
+            {
+                foreach (var a in ViewBag.Areas)
+                {
+                    <option value="@a" selected="@(ViewBag.SelectedArea == a)">@a</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="col-auto">
+        <select name="floor" class="form-select-custom" onchange="this.form.submit()">
+            <option value="全部">全部楼层</option>
+            @if (ViewBag.Floors != null)
+            {
+                foreach (var f in ViewBag.Floors)
+                {
+                    <option value="@f" selected="@(ViewBag.SelectedFloor == f)">@f</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="col-auto">
+        <a href="@Url.Action("Index")" class="btn btn-custom-outline btn-custom-sm">重置</a>
+    </div>
+</form>
+
+<!-- 座位网格 -->
+@if (Model.Count == 0)
+{
+    <div class="empty-state">
+        <div class="empty-icon">🪑</div>
+        <h6>暂无座位</h6>
+        <p>该区域暂无座位，请调整筛选条件。</p>
+    </div>
+}
+else
+{
+    <div class="row g-3 seat-card-grid">
+        @foreach (var seat in Model)
+        {
+            <div class="col-6 col-md-4 col-lg-3">
+                <a class="seat-card" asp-controller="Seats" asp-action="Detail" asp-route-id="@seat.Id">
+                    <h6>@seat.SeatNumber</h6>
+                    <div class="seat-meta">@seat.Area · @seat.Floor</div>
+                    <div>
+                        @{
+                            var badgeClass = seat.DisplayStatus switch
+                            {
+                                "空闲" => "badge-available",
+                                "已预约" => "badge-reserved",
+                                "使用中" => "badge-inuse",
+                                "维护中" => "badge-maintenance",
+                                _ => "badge-secondary"
+                            };
+                        }
+                        <span class="badge-status @badgeClass">@seat.DisplayStatus</span>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+}

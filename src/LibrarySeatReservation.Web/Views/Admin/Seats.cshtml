@@ -1,0 +1,74 @@
+@model List<Seat>
+@{
+    ViewData["Title"] = "座位管理";
+    Layout = "_AdminLayout";
+}
+
+<h4 class="section-title mb-4">座位管理</h4>
+
+<!-- 添加座位 -->
+<form method="post" asp-controller="Admin" asp-action="CreateSeat" id="createSeatForm">
+    <div class="admin-action-bar">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label-custom">座位编号</label>
+                <input type="text" name="seatNumber" class="form-custom w-100" placeholder="例：D-01" required />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label-custom">区域</label>
+                <input type="text" name="area" class="form-custom w-100" placeholder="例：四楼讨论区" required />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label-custom">楼层</label>
+                <input type="text" name="floor" class="form-custom w-100" placeholder="例：4F" required />
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-custom-primary w-100">添加座位</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- 座位列表 -->
+@if (Model.Count == 0)
+{
+    <div class="empty-state">
+        <div class="empty-icon">🪑</div>
+        <h6>暂无座位</h6>
+        <p>请使用上方表单添加座位。</p>
+    </div>
+}
+else
+{
+    <div class="table-responsive-custom">
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>座位编号</th>
+                    <th>区域</th>
+                    <th>楼层</th>
+                    <th>状态</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var seat in Model)
+                {
+                    <tr>
+                        <td>@seat.Id</td>
+                        <td><strong>@seat.SeatNumber</strong></td>
+                        <td>@seat.Area</td>
+                        <td>@seat.Floor</td>
+                        <td>
+                            @{
+                                var badgeClass = seat.Status == "Available" ? "badge-available" : "badge-maintenance";
+                                var displayText = seat.Status == "Available" ? "可用" : "维护中";
+                            }
+                            <span class="badge-status @badgeClass">@displayText</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
