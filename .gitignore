@@ -41,5 +41,9 @@ nodejs/
 ## Python (dev environment)
 python311/
 
+## Playwright test artifacts
+test-results/
+.playwright-mcp/
+
 ## Project specific
 SecondClassroomManager/

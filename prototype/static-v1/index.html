@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图书馆座位预约系统 - 首页</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 用户端导航栏 -->
+  <nav class="navbar navbar-expand navbar-user">
+    <div class="container-fluid px-3">
+      <a class="navbar-brand" href="index.html">📚 座位预约</a>
+      <div class="ms-auto d-flex align-items-center gap-2">
+        <span class="user-display">当前：<span id="currentUser">学生A</span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 导航标签 -->
+  <div class="bg-white border-bottom">
+    <div class="page-container d-flex gap-3 py-2">
+      <a href="index.html" class="text-decoration-none fw-semibold" style="color:#2563EB;">首页</a>
+      <a href="seats.html" class="text-decoration-none" style="color:#64748B;">座位列表</a>
+      <a href="my-reservations.html" class="text-decoration-none" style="color:#64748B;">我的预约</a>
+    </div>
+  </div>
+
+  <!-- 主内容 -->
+  <div class="page-container">
+    <!-- 欢迎横幅 -->
+    <div class="card-custom-static mb-4">
+      <h5 class="fw-bold mb-1">欢迎使用图书馆座位预约系统</h5>
+      <p class="mb-0" style="color:var(--color-text-secondary);font-size:14px;">选择下方体验账号，快速查看和预约座位。</p>
+    </div>
+
+    <!-- 账号切换区 -->
+    <div class="account-switcher mb-4">
+      <h6 class="fw-bold mb-3">👤 切换体验账号</h6>
+      <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-3">
+        <select class="form-custom" style="max-width:320px;width:100%;" onchange="switchUser(this.value)">
+          <option value="学生A" selected>学生A</option>
+          <option value="学生B">学生B</option>
+          <option value="学生C">学生C</option>
+          <option value="学生D">学生D</option>
+          <option value="学生E">学生E</option>
+        </select>
+        <button class="btn-custom-primary btn-custom-sm">切换账号</button>
+      </div>
+      <div class="mt-2">
+        <span class="badge bg-light text-dark me-2">当前：<strong id="userDisplay2">学生A</strong></span>
+        <span class="badge bg-light text-dark">无需密码，点击即用</span>
+      </div>
+    </div>
+
+    <!-- 快速入口 -->
+    <div class="row g-3">
+      <div class="col-6">
+        <a href="seats.html" class="card-custom-static text-center text-decoration-none d-block py-4" style="color:inherit;">
+          <div style="font-size:2rem;">🪑</div>
+          <div class="fw-semibold mt-2">查看座位</div>
+          <small style="color:var(--color-text-secondary);">浏览空闲座位</small>
+        </a>
+      </div>
+      <div class="col-6">
+        <a href="my-reservations.html" class="card-custom-static text-center text-decoration-none d-block py-4" style="color:inherit;">
+          <div style="font-size:2rem;">📋</div>
+          <div class="fw-semibold mt-2">我的预约</div>
+          <small style="color:var(--color-text-secondary);">查看预约记录</small>
+        </a>
+      </div>
+    </div>
+
+    <!-- 公告 -->
+    <div class="card-custom-static mt-4">
+      <h6 class="fw-bold mb-2">📢 系统公告</h6>
+      <ul class="mb-0" style="font-size:14px;color:var(--color-text-secondary);">
+        <li>自习区（1F）座位已开放预约</li>
+        <li>A-03、B-02 座位维护中，暂不可预约</li>
+        <li>每人每次可预约 30 分钟 ~ 4 小时</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    function switchUser(val) {
+      document.getElementById('currentUser').textContent = val;
+      document.getElementById('userDisplay2').textContent = val;
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
