@@ -5,8 +5,45 @@
 
 <h4 class="section-title mb-4">预约管理</h4>
 
+<!-- 筛选表单 -->
+<form method="get" asp-controller="Admin" asp-action="Reservations" class="row g-2 mb-4">
+    <div class="col-auto">
+        <label class="form-label-custom" style="font-size:13px;">日期</label>
+        <input type="date" name="dateFilter" class="form-custom" value="@ViewBag.DateFilter"
+               style="width:180px;height:38px;font-size:13px;" />
+    </div>
+    <div class="col-auto">
+        <label class="form-label-custom" style="font-size:13px;">状态</label>
+        <select name="statusFilter" class="form-select-custom" style="height:38px;font-size:13px;">
+            <option value="全部" selected="@(ViewBag.StatusFilter == "全部")">全部状态</option>
+            <option value="待开始" selected="@(ViewBag.StatusFilter == "待开始")">待开始</option>
+            <option value="使用中" selected="@(ViewBag.StatusFilter == "使用中")">使用中</option>
+            <option value="已完成" selected="@(ViewBag.StatusFilter == "已完成")">已完成</option>
+            <option value="已取消" selected="@(ViewBag.StatusFilter == "已取消")">已取消</option>
+        </select>
+    </div>
+    <div class="col-auto">
+        <label class="form-label-custom" style="font-size:13px;">用户</label>
+        <select name="userId" class="form-select-custom" style="height:38px;font-size:13px;">
+            <option value="">全部用户</option>
+            @if (ViewBag.StudentUsers != null)
+            {
+                foreach (var u in ViewBag.StudentUsers)
+                {
+                    <option value="@u.Id" selected="@(ViewBag.UserId == u.Id)">@u.Name</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="col-auto" style="padding-top:22px;">
+        <button type="submit" class="btn btn-custom-primary btn-custom-sm">筛选</button>
+        <a href="@Url.Action("Reservations")" class="btn btn-custom-outline btn-custom-sm">重置</a>
+    </div>
+</form>
+
+@using System.Linq;
 @{
-    var reservations = ViewBag.Reservations as List<dynamic>;
+    var reservations = ((System.Collections.IEnumerable)ViewBag.Reservations)?.Cast<dynamic>().ToList();
 }
 
 @if (reservations == null || reservations.Count == 0)
@@ -14,7 +51,7 @@
     <div class="empty-state">
         <div class="empty-icon">📋</div>
         <h6>暂无预约记录</h6>
-        <p>目前还没有任何预约记录。</p>
+        <p>当前筛选条件下没有预约记录。</p>
     </div>
 }
 else
@@ -31,6 +68,7 @@ else
                     <th>时间</th>
                     <th>状态</th>
                     <th>创建时间</th>
+                    <th>操作</th>
                 </tr>
             </thead>
             <tbody>
@@ -57,6 +95,19 @@ else
                             <span class="badge-status @badgeClass">@r.DisplayStatus</span>
                         </td>
                         <td style="font-size:13px;">@r.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>
+                            @if (r.CanCancelAdmin)
+                            {
+                                <form method="post" asp-controller="Admin" asp-action="CancelReservation" asp-route-id="@r.Id"
+                                      onsubmit="return confirm('确定取消此预约（管理员操作）？')">
+                                    <button type="submit" class="btn btn-custom-danger btn-custom-sm">取消</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="text-secondary" style="font-size:12px;">—</span>
+                            }
+                        </td>
                     </tr>
                 }
             </tbody>

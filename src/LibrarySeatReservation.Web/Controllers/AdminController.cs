@@ -61,33 +61,107 @@ public class AdminController : Controller
     // ========== 预约管理 ==========
 
     /// <summary>
-    /// 预约管理 — 查询全部预约记录
+    /// 预约管理 — 查询全部预约记录，支持按日期/状态/用户筛选
     /// </summary>
     [AdminAuth]
-    public IActionResult Reservations()
+    public IActionResult Reservations(string? dateFilter, string? statusFilter, int? userId)
     {
-        var reservations = _db.Reservations
+        var query = _db.Reservations
             .Include(r => r.Seat)
             .Include(r => r.StudentUser)
+            .AsQueryable();
+
+        // 日期筛选
+        if (!string.IsNullOrEmpty(dateFilter) && DateOnly.TryParse(dateFilter, out var parsedDate))
+        {
+            query = query.Where(r => r.Date == parsedDate);
+        }
+
+        // 状态筛选（按持久化状态 + 动态状态需在内存中处理）
+        // 先查全部，然后按状态筛选在内存中做
+        var reservations = query
             .OrderByDescending(r => r.Date)
             .ThenByDescending(r => r.StartTime)
             .ToList();
 
-        ViewBag.Reservations = reservations.Select(r => new
+        // 映射为显示对象
+        var displayList = reservations.Select(r =>
         {
-            r.Id,
-            SeatNumber = r.Seat.SeatNumber,
-            r.Seat.Area,
-            UserName = r.StudentUser.Name,
-            r.Date,
-            r.StartTime,
-            r.EndTime,
-            r.Status,
-            DisplayStatus = StatusHelper.GetReservationDisplayStatus(r.Status, r.StartTime, r.EndTime),
-            r.CreatedAt
+            var displayStatus = StatusHelper.GetReservationDisplayStatus(r.Status, r.Date, r.StartTime, r.EndTime);
+            return new
+            {
+                r.Id,
+                SeatNumber = r.Seat.SeatNumber,
+                r.Seat.Area,
+                UserName = r.StudentUser.Name,
+                r.Date,
+                r.StartTime,
+                r.EndTime,
+                r.Status,
+                DisplayStatus = displayStatus,
+                r.CreatedAt,
+                // 可取消条件：状态为 Pending 且（未来日期 或 今天尚未开始）
+                CanCancelAdmin = r.Status == "Pending" && (r.Date > DateOnly.FromDateTime(DateTime.Today) || (r.Date == DateOnly.FromDateTime(DateTime.Today) && DateTime.Now.TimeOfDay < r.StartTime))
+            };
         }).ToList();
 
+        // 按动态状态筛选（如果有）
+        if (!string.IsNullOrEmpty(statusFilter) && statusFilter != "全部")
+        {
+            displayList = displayList.Where(r => r.DisplayStatus == statusFilter).ToList();
+        }
+
+        // 按用户筛选
+        if (userId.HasValue)
+        {
+            displayList = displayList.Where(r => reservations.Any(rr => rr.Id == r.Id && rr.StudentUserId == userId.Value)).ToList();
+            // 重新筛选：用 reservations 的原始 StudentUserId
+            displayList = displayList.Join(
+                reservations.Where(r => r.StudentUserId == userId.Value),
+                dl => dl.Id,
+                r => r.Id,
+                (dl, _) => dl
+            ).ToList();
+        }
+
+        ViewBag.Reservations = displayList;
+        ViewBag.DateFilter = dateFilter ?? "";
+        ViewBag.StatusFilter = statusFilter ?? "全部";
+        ViewBag.UserId = userId;
+
+        // 传递筛选下拉数据
+        ViewBag.StudentUsers = _db.StudentUsers.OrderBy(u => u.Id).ToList();
+
         return View();
+    }
+
+    /// <summary>
+    /// 管理员取消预约（POST）— 管理员可取消任意 Pending 预约
+    /// </summary>
+    [AdminAuth]
+    [HttpPost]
+    public IActionResult CancelReservation(int id)
+    {
+        var reservation = _db.Reservations.FirstOrDefault(r => r.Id == id);
+        if (reservation == null) return NotFound();
+
+        if (reservation.Status != "Pending")
+        {
+            TempData["ErrorMessage"] = "只能取消待开始的预约";
+            return RedirectToAction("Reservations");
+        }
+
+        if (reservation.Date == DateOnly.FromDateTime(DateTime.Today) && DateTime.Now.TimeOfDay >= reservation.StartTime)
+        {
+            TempData["ErrorMessage"] = "已开始的预约无法取消";
+            return RedirectToAction("Reservations");
+        }
+
+        reservation.Status = "Cancelled";
+        _db.SaveChanges();
+
+        TempData["SuccessMessage"] = $"预约 #{id} 已取消";
+        return RedirectToAction("Reservations");
     }
 
     // ========== 座位管理 ==========
@@ -136,6 +210,24 @@ public class AdminController : Controller
         return RedirectToAction("Seats");
     }
 
+    /// <summary>
+    /// 切换座位状态（POST）— Available ↔ Maintenance
+    /// </summary>
+    [AdminAuth]
+    [HttpPost]
+    public IActionResult ToggleSeatStatus(int id)
+    {
+        var seat = _db.Seats.FirstOrDefault(s => s.Id == id);
+        if (seat == null) return NotFound();
+
+        seat.Status = seat.Status == "Available" ? "Maintenance" : "Available";
+        _db.SaveChanges();
+
+        var newStatus = seat.Status == "Available" ? "可用" : "维护中";
+        TempData["SuccessMessage"] = $"座位 {seat.SeatNumber} 已切换为「{newStatus}」";
+        return RedirectToAction("Seats");
+    }
+
     // ========== 统计 ==========
 
     /// <summary>
@@ -167,10 +259,16 @@ public class AdminController : Controller
             .Select(g => new { Area = g.Key, Count = g.Count() })
             .ToList();
 
+        // 各状态座位数（用于详细统计）
+        var availableSeats = _db.Seats.Count(s => s.Status == "Available");
+        var maintenanceSeats = _db.Seats.Count(s => s.Status == "Maintenance");
+
         ViewBag.TotalSeats = totalSeats;
         ViewBag.TodayReservations = todayReservations;
         ViewBag.UsageRate = Math.Round(usageRate, 1);
         ViewBag.AreaDistribution = areaDistribution;
+        ViewBag.AvailableSeats = availableSeats;
+        ViewBag.MaintenanceSeats = maintenanceSeats;
 
         return View();
     }

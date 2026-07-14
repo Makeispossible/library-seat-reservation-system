@@ -94,7 +94,7 @@ public class SeatsController : Controller
             r.StartTime,
             r.EndTime,
             r.Status,
-            DisplayStatus = StatusHelper.GetReservationDisplayStatus(r.Status, r.StartTime, r.EndTime)
+            DisplayStatus = StatusHelper.GetReservationDisplayStatus(r.Status, r.Date, r.StartTime, r.EndTime)
         }).ToList();
 
         return View(seat);

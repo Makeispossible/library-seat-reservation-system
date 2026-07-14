@@ -38,15 +38,24 @@ public static class StatusHelper
     /// 结果：待开始 / 使用中 / 已完成 / 已取消
     /// </summary>
     /// <param name="status">Reservation.Status 持久化值</param>
+    /// <param name="date">预约日期</param>
     /// <param name="startTime">预约开始时间</param>
     /// <param name="endTime">预约结束时间</param>
     /// <returns>中文显示状态</returns>
-    public static string GetReservationDisplayStatus(string status, TimeSpan startTime, TimeSpan endTime)
+    public static string GetReservationDisplayStatus(string status, DateOnly date, TimeSpan startTime, TimeSpan endTime)
     {
         if (status == "Cancelled")
             return "已取消";
 
-        // status 为 "Pending"
+        var today = DateOnly.FromDateTime(DateTime.Today);
+
+        if (date > today)
+            return "待开始";
+
+        if (date < today)
+            return "已完成";
+
+        // date == today, 使用时间比较
         var now = DateTime.Now.TimeOfDay;
 
         if (now >= endTime)

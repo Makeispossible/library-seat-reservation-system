@@ -35,6 +35,10 @@ LibrarySeatReservation/         ← 仓库根目录
 │   ├── 10-开发准备与Sprint0.md
 │   ├── 11-开发前一致性总审计.md
 │   ├── 12-开发起步与骨架记录.md
+│   ├── 13-用户端主链路开发记录.md
+│   ├── 13-用户端主链路开发-审计.md
+│   ├── 14-管理端与权限开发记录.md
+│   ├── 14-管理端与权限开发-审计.md
 │   └── 项目任务板与迭代记录.md
 ├── prototype/
 │   └── static-v1/
@@ -106,12 +110,12 @@ dotnet run --project src/LibrarySeatReservation.Web
 | 体验账号切换 | ✅ 已验证通过 | Session 持久化正常，5 学生可切换 |
 | 座位列表 + 筛选 | ✅ 已验证通过 | 12 座位网格 + 区域/楼层筛选正常 |
 | 座位详情 + 时段 | ✅ 已验证通过 | 详情渲染 + 预约按钮守卫正常 |
-| 预约提交 + 冲突校验 | 🔲 Controller+View 就绪 | 需 Sprint 2 验证 |
-| 我的预约 + 取消 | 🔲 Controller+View 就绪 | 需 Sprint 2 验证 |
-| 管理员登录 | 🔲 Controller+View 就绪 | 需 Sprint 3 验证 |
-| 座位管理 | 🔲 View 就绪 | 需 Sprint 3 集成验证 |
-| 预约记录查看 | 🔲 View 就绪 | 需 Sprint 3 集成验证 |
-| 统计页 | 🔲 View 就绪 | 需 Sprint 3 集成验证 |
+| 预约提交 + 冲突校验 | ✅ 已完成 | 表单校验 + 冲突检测正常 |
+| 我的预约 + 取消 | ✅ 已完成 | 预约查看 + 取消按钮 + 日期感知守卫正常 |
+| 管理员登录 | ✅ 已验证通过 | Session 持久化 + [AdminAuth] 守卫正常 |
+| 座位管理 | ✅ 已验证通过 | 添加座位 + 状态切换 Available ↔ Maintenance |
+| 预约记录查看 | ✅ 已验证通过 | 按日期/状态/用户筛选 + 管理员取消 |
+| 统计页 | ✅ 已验证通过 | 实时 DB 计算：总数/今日预约/使用率/区域分布 |
 
 ---
 
@@ -148,6 +152,6 @@ dotnet ef database update --project src/LibrarySeatReservation.Web
 
 ## 当前阶段
 
-**Sprint 1 — 用户端主链路验证，已完成。** 三页（首页 + 座位列表 + 座位详情）全部 dotnet run 验证通过，体验账号切换可用，筛选/详情/预约按钮守卫正常。
+**Sprint 3 — 管理端与权限开发，已完成。** 管理员登录/登出、预约管理（按日期/状态/用户筛选 + 管理员取消）、座位管理（添加 + Available ↔ Maintenance 切换）、统计页（实时 DB 计算）全部验证通过。[AdminAuth] 守卫覆盖全部管理端写入 Action。
 
-下一阶段：Sprint 2 — 预约提交 + 我的预约 + 取消预约。（预约流程全链路开发）
+下一阶段：Sprint 4 — 全链路集成 + 一致性审计 + PRD 验收 + 交付。

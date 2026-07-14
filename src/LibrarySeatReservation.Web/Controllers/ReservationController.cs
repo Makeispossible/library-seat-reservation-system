@@ -150,8 +150,8 @@ public class ReservationController : Controller
             r.Date,
             r.StartTime,
             r.EndTime,
-            DisplayStatus = StatusHelper.GetReservationDisplayStatus(r.Status, r.StartTime, r.EndTime),
-            CanCancel = r.Status == "Pending" && nowTime < r.StartTime
+            DisplayStatus = StatusHelper.GetReservationDisplayStatus(r.Status, r.Date, r.StartTime, r.EndTime),
+            CanCancel = r.Status == "Pending" && (r.Date > DateOnly.FromDateTime(DateTime.Today) || (r.Date == DateOnly.FromDateTime(DateTime.Today) && nowTime < r.StartTime))
         }).ToList();
 
         return View();
@@ -191,8 +191,8 @@ public class ReservationController : Controller
             return RedirectToAction("My");
         }
 
-        // 边界 4：已经开始
-        if (DateTime.Now.TimeOfDay >= reservation.StartTime)
+        // 边界 4：已经开始（仅今日预约检查时间，未来日期的预约不受此限）
+        if (reservation.Date == DateOnly.FromDateTime(DateTime.Today) && DateTime.Now.TimeOfDay >= reservation.StartTime)
         {
             TempData["ErrorMessage"] = "已开始的预约无法取消";
             return RedirectToAction("My");
