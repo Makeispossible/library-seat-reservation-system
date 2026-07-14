@@ -46,8 +46,8 @@ LibrarySeatReservation
 ├── Database                 # 数据库初始化说明
 │   └── README.md
 ├── Docs                     # 课程设计文档
-│   ├── 18-项目文档.md
-│   └── 19-软件配置与使用说明.md
+│   ├── 项目文档.md
+│   └── 软件配置与使用说明.md
 ├── Filters                  # 过滤器
 │   └── AdminAuthFilter.cs       # 管理端认证
 ├── Helpers                  # 工具类
