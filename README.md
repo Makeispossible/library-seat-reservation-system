@@ -13,6 +13,8 @@
 | 数据库 | SQL Server LocalDB | 内置 |
 | 前端 | Bootstrap | 5.3 (CDN) |
 | 前端扩展 | `css/style.css` | 自定义样式 |
+| 自动化测试 | Playwright (msedge) | `@playwright/test` |
+| 脚本测试 | Node.js | `scripts/smoke-test.mjs` |
 
 > 降级方案：如果 LocalDB 不可用，可切换 SQLite（修改 Program.cs 中 `UseSqlServer` → `UseSqlite`，连接字符串改为 `Data Source=LibrarySeat.db`）。
 
@@ -39,6 +41,8 @@ LibrarySeatReservation/         ← 仓库根目录
 │   ├── 13-用户端主链路开发-审计.md
 │   ├── 14-管理端与权限开发记录.md
 │   ├── 14-管理端与权限开发-审计.md
+│   ├── 15-功能完善与体验优化记录.md
+│   ├── 16-联调测试与缺陷闭环.md
 │   └── 项目任务板与迭代记录.md
 ├── prototype/
 │   └── static-v1/
@@ -66,6 +70,13 @@ LibrarySeatReservation/         ← 仓库根目录
 │       ├── Program.cs
 │       ├── appsettings.json
 │       └── LibrarySeatReservation.Web.csproj
+├── e2e/                       ← Playwright E2E 测试
+│   ├── user-flow.spec.ts
+│   └── admin-flow.spec.ts
+├── scripts/
+│   └── smoke-test.mjs         ← Node.js 脚本烟雾测试
+├── playwright.config.ts       ← Playwright 配置（msedge + baseURL）
+├── package.json
 ├── LibrarySeatReservation.sln
 ├── README.md
 └── opencode.json
@@ -80,6 +91,8 @@ LibrarySeatReservation/         ← 仓库根目录
 | .NET 9 SDK | `dotnet --version` 确认 ≥ 9.0 |
 | SQL Server LocalDB | `SqlLocalDB info` 确认可用 |
 | 浏览器 | 现代浏览器（Chrome / Edge / Firefox） |
+| Node.js | ≥ 18（运行烟雾测试 `node scripts/smoke-test.mjs`） |
+| npm | 可选（安装 Playwright E2E 测试时需用） |
 
 ---
 
@@ -97,7 +110,39 @@ dotnet ef database update --project src/LibrarySeatReservation.Web
 dotnet run --project src/LibrarySeatReservation.Web
 ```
 
-浏览器访问 `http://localhost:5000` 即可看到首页。首次启动时种子数据自动写入。
+浏览器访问 `http://localhost:5211` 即可看到首页。首次启动时种子数据自动写入。
+
+---
+
+## 自动化验证
+
+### 安装 E2E 依赖（仅首次）
+
+```powershell
+# PowerShell 需先绕过执行策略
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+npm install
+```
+
+### 运行 Playwright 自动点击测试
+
+```powershell
+npx playwright test --reporter=list
+```
+使用系统 Microsoft Edge 驱动，覆盖用户端（4 用例）+ 管理端（5 用例）主链路。
+
+### 运行脚本烟雾测试
+
+```powershell
+node scripts/smoke-test.mjs
+```
+使用 Node.js 原生 fetch() 检查 10 个页面可达性，不依赖第三方包。**这是最快速的健康检查方式。**
+
+### 运行 Playwright 有头模式
+
+```powershell
+npx playwright test --reporter=list --headed
+```
 
 ---
 
@@ -116,6 +161,7 @@ dotnet run --project src/LibrarySeatReservation.Web
 | 座位管理 | ✅ 已验证通过 | 添加座位 + 状态切换 Available ↔ Maintenance |
 | 预约记录查看 | ✅ 已验证通过 | 按日期/状态/用户筛选 + 管理员取消 |
 | 统计页 | ✅ 已验证通过 | 实时 DB 计算：总数/今日预约/使用率/区域分布 |
+| E2E 自动测试 | ✅ 9/9 通过 | Playwright (msedge) + Node.js 脚本烟雾测试 |
 
 ---
 
@@ -146,12 +192,17 @@ dotnet ef database update --project src/LibrarySeatReservation.Web
 
 > 此段落将持续更新已发现但未修复的已知问题。
 
-- 当前无已知限制
+| 编号 | 问题 | 严重度 | 备注 |
+|------|------|--------|------|
+| TD-01 | `favicon.ico` 缺失（浏览器控制台 404） | P4 | 不影响功能 |
+| TD-04 | `LibrarySeatReservation.Web.styles.css` 404 | P4 | ASP.NET Core 可选文件，可忽略 |
+| TD-05 | Stats 视图未渲染 AvailableSeats / MaintenanceSeats | P3 | 下轮修复 |
+| TD-06 | 导航栏当前页未高亮（用户端 + 管理端） | P3 | 下一轮 UI 优化 |
 
 ---
 
 ## 当前阶段
 
-**Sprint 3 — 管理端与权限开发，已完成。** 管理员登录/登出、预约管理（按日期/状态/用户筛选 + 管理员取消）、座位管理（添加 + Available ↔ Maintenance 切换）、统计页（实时 DB 计算）全部验证通过。[AdminAuth] 守卫覆盖全部管理端写入 Action。
+**Sprint 4 — 联调测试与缺陷闭环，已完成。** Playwright 9/9 自动化测试通过，Node.js 脚本烟雾测试 10/10 通过，P0/P1 清零。工程进入最终交付状态。
 
-下一阶段：Sprint 4 — 全链路集成 + 一致性审计 + PRD 验收 + 交付。
+**下一阶段：** 交付、仓库提交与复盘。

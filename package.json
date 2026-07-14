@@ -1,0 +1,12 @@
+{
+  "name": "library-seat-reservation-e2e",
+  "private": true,
+  "scripts": {
+    "test:e2e": "npx playwright test",
+    "test:e2e:headed": "npx playwright test --headed",
+    "test:smoke": "powershell -ExecutionPolicy Bypass -File scripts/smoke-test.ps1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0"
+  }
+}
