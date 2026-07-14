@@ -1,49 +1,46 @@
-## .NET
+## .NET build output
 bin/
 obj/
+out/
+publish/
+
+## Visual Studio / Rider / VS Code
+.vs/
+.vscode/
+.idea/
 *.user
 *.suo
 *.userosscache
 *.sln.docstates
 
-## Visual Studio
-.vs/
-*.sdf
-*.opensdf
-*.opendb
-*.cachefile
-*.VC.db
-*.VC.VC.opendb
-
-## Rider
-.idea/
-*.sln.iml
-
 ## Node
 node_modules/
+nodejs/
 
-## Python
+## Python (dev environment)
+python311/
 __pycache__/
 *.pyc
 *.pyo
 
 ## OS files
-Thumbs.db
 .DS_Store
+Thumbs.db
 
-## OpenCode
-.omo/
-.opencode/
+## Logs and temp
+*.log
+*.tmp
+*.temp
 
-## Node.js (dev environment)
-nodejs/
-
-## Python (dev environment)
-python311/
-
-## Project specific
-SecondClassroomManager/
+## SQLite transient files
+*.db-shm
+*.db-wal
 
 ## Playwright test artifacts
 .playwright-mcp/
 test-results/
+
+## Environment files
+.env
+.env.*
+!.env.example
