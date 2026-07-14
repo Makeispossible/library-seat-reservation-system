@@ -24,30 +24,35 @@
 
 ```
 LibrarySeatReservation/         ← 仓库根目录
-├── docs/                       ← 项目文档
-│   ├── 01-项目立项单.md
-│   ├── 02-需求分析与MVP确认.md
-│   ├── 03-PRD-Lite.md
-│   ├── 04-页面树与业务流程.md
-│   ├── 05-页面卡与UI规范.md
-│   ├── 07-系统设计说明.md
-│   ├── 08-数据库设计.md
-│   ├── 09-关键链路详细设计.md
-│   ├── 09-关键链路详细设计-审计.md
-│   ├── 10-开发准备与Sprint0.md
-│   ├── 11-开发前一致性总审计.md
-│   ├── 12-开发起步与骨架记录.md
-│   ├── 13-用户端主链路开发记录.md
-│   ├── 13-用户端主链路开发-审计.md
-│   ├── 14-管理端与权限开发记录.md
-│   ├── 14-管理端与权限开发-审计.md
-│   ├── 15-功能完善与体验优化记录.md
-│   ├── 16-联调测试与缺陷闭环.md
+├── database/                   ← 数据库初始化说明
+│   └── README.md
+├── docs/                       ← 项目文档（按阶段编号）
+│   ├── 01-项目立项单.md & -审计.md
+│   ├── 02-需求分析与MVP确认.md & -审计.md
+│   ├── 03-PRD-Lite.md & -审计.md
+│   ├── 04-页面树与业务流程.md & -审计.md
+│   ├── 05-页面卡与UI规范.md & -审计.md
+│   ├── 06-静态原型与原型评审.md & -审计.md
+│   ├── 07-系统设计说明.md & -审计.md
+│   ├── 08-数据库设计.md & -审计.md
+│   ├── 09-关键链路详细设计.md & -审计.md
+│   ├── 10-开发准备与Sprint0.md & -审计.md
+│   ├── 11-开发前一致性总审计.md & -审计.md
+│   ├── 12-开发起步与骨架记录.md & -审计.md
+│   ├── 13-用户端主链路开发记录.md & -审计.md
+│   ├── 14-管理端与权限开发记录.md & -审计.md
+│   ├── 15-功能完善与体验优化记录.md & -审计.md
+│   ├── 16-联调测试与缺陷闭环.md & -审计.md
+│   ├── 17-交付说明与项目复盘.md & -审计.md
 │   └── 项目任务板与迭代记录.md
-├── prototype/
-│   └── static-v1/
-│       └── css/
-│           └── style.css
+├── prototype/                  ← 交互原型
+│   ├── static-v1/              ← 9 个 HTML 页面
+│   │   ├── index.html
+│   │   ├── seats.html, seat-detail.html, reservation-create.html, my-reservations.html
+│   │   ├── admin-login.html, admin-reservations.html, admin-seats.html, admin-stats.html
+│   │   └── css/style.css
+│   └── review-1/               ← 原型评审清单
+│       └── 原型评审清单.md
 ├── src/
 │   └── LibrarySeatReservation.Web/  ← ASP.NET Core MVC 项目
 │       ├── Controllers/
@@ -201,8 +206,8 @@ dotnet ef database update --project src/LibrarySeatReservation.Web
 
 ---
 
-## 当前阶段
+## 最终交付
 
-**Sprint 4 — 联调测试与缺陷闭环，已完成。** Playwright 9/9 自动化测试通过，Node.js 脚本烟雾测试 10/10 通过，P0/P1 清零。工程进入最终交付状态。
+**阶段 17 — 交付、仓库提交与复盘，已完成。** 全部 17 阶段文档齐全，Playwright 9/9 自动化测试通过，Node.js 脚本烟雾测试 10/10 通过，P0/P1 清零。
 
-**下一阶段：** 交付、仓库提交与复盘。
+**最终提交：** `589be72` (`v1.0-final` tag)
