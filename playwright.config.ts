@@ -12,7 +12,7 @@ export default defineConfig({
     trace: 'retain-on-failure',
   },
   webServer: {
-    command: 'dotnet run --project LibrarySeatReservation.Web.csproj --urls http://localhost:5211',
+    command: 'dotnet run --project src/LibrarySeatReservation.Web/LibrarySeatReservation.Web.csproj --urls http://localhost:5211',
     port: 5211,
     reuseExistingServer: true,
     timeout: 60000,
