@@ -43,3 +43,7 @@ python311/
 
 ## Project specific
 SecondClassroomManager/
+
+## Playwright test artifacts
+.playwright-mcp/
+test-results/
