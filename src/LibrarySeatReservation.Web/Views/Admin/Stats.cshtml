@@ -5,28 +5,32 @@
 
 <h4 class="section-title mb-4">数据统计</h4>
 
+<!-- 数字卡片行 -->
 <div class="row g-4 mb-4">
-    <!-- 卡片 1：座位总数 -->
-    <div class="col-md-4">
+    <div class="col-md-3 col-6">
         <div class="stats-card">
             <div class="stats-number">@ViewBag.TotalSeats</div>
             <div class="stats-label">座位总数</div>
         </div>
     </div>
-    <!-- 卡片 2：今日预约数 -->
-    <div class="col-md-4">
+    <div class="col-md-3 col-6">
         <div class="stats-card">
             <div class="stats-number">@ViewBag.TodayReservations</div>
             <div class="stats-label">今日预约数</div>
         </div>
     </div>
-    <!-- 卡片 3：使用率 -->
-    <div class="col-md-4">
+    <div class="col-md-3 col-6">
         <div class="stats-card">
             <div class="stats-number">
                 @ViewBag.UsageRate<span class="stats-unit">%</span>
             </div>
             <div class="stats-label">座位使用率</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stats-card">
+            <div class="stats-number">@ViewBag.AvailableSeats</div>
+            <div class="stats-label">可用座位</div>
         </div>
     </div>
 </div>
@@ -48,9 +52,27 @@
     }
 </div>
 
-<!-- 区域分布 -->
+<!-- 图表行 -->
+<div class="row g-4 mb-4">
+    <!-- 区域分布柱状图 -->
+    <div class="col-md-6">
+        <div class="card-custom-static">
+            <h5 class="section-title-sm mb-3">各区域座位分布</h5>
+            <canvas id="areaChart" height="200"></canvas>
+        </div>
+    </div>
+    <!-- 近 7 日趋势折线图 -->
+    <div class="col-md-6">
+        <div class="card-custom-static">
+            <h5 class="section-title-sm mb-3">近 7 日预约趋势</h5>
+            <canvas id="trendChart" height="200"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- 区域分布表格（备查） -->
 <div class="card-custom-static">
-    <h5 class="section-title-sm mb-3">各区域座位分布</h5>
+    <h5 class="section-title-sm mb-3">区域分布明细</h5>
     <div class="table-responsive-custom">
         <table class="table-custom">
             <thead>
@@ -74,3 +96,129 @@
         </table>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script>
+        // ===== Chart.js 颜色配置 =====
+        const COLORS = {
+            primary: '#2563eb',
+            primaryLight: '#93c5fd',
+            success: '#059669',
+            warning: '#d97706',
+            danger: '#dc2626',
+            gray: '#94a3b8',
+            chartPalette: ['#2563eb', '#059669', '#d97706', '#8b5cf6', '#ec4899', '#06b6d4']
+        };
+
+        // ===== 区域分布柱状图 =====
+        async function loadAreaChart() {
+            try {
+                const res = await fetch('/Admin/GetAreaChartData');
+                const data = await res.json();
+
+                const labels = data.map(d => d.label);
+                const values = data.map(d => d.value);
+
+                new Chart(document.getElementById('areaChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '座位数',
+                            data: values,
+                            backgroundColor: COLORS.chartPalette.slice(0, labels.length),
+                            borderColor: COLORS.chartPalette.slice(0, labels.length),
+                            borderWidth: 1,
+                            borderRadius: 4,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { stepSize: 1, font: { size: 12 } },
+                                grid: { color: 'rgba(0,0,0,0.06)' }
+                            },
+                            x: {
+                                ticks: { font: { size: 12 } },
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            } catch (e) {
+                console.error('加载区域图表失败:', e);
+                document.getElementById('areaChart').insertAdjacentHTML('afterend',
+                    '<p style="color:var(--color-text-secondary);font-size:13px;">图表加载失败</p>');
+            }
+        }
+
+        // ===== 近 7 日趋势折线图 =====
+        async function loadTrendChart() {
+            try {
+                const res = await fetch('/Admin/GetDailyTrendData');
+                const data = await res.json();
+
+                const labels = data.map(d => d.date);
+                const values = data.map(d => d.count);
+
+                new Chart(document.getElementById('trendChart'), {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '预约数',
+                            data: values,
+                            borderColor: COLORS.primary,
+                            backgroundColor: 'rgba(37,99,235,0.08)',
+                            fill: true,
+                            tension: 0.3,
+                            pointBackgroundColor: COLORS.primary,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            borderWidth: 2,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { stepSize: 1, font: { size: 12 } },
+                                grid: { color: 'rgba(0,0,0,0.06)' }
+                            },
+                            x: {
+                                ticks: { font: { size: 12 } },
+                                grid: { display: false }
+                            }
+                        },
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
+                        }
+                    }
+                });
+            } catch (e) {
+                console.error('加载趋势图表失败:', e);
+                document.getElementById('trendChart').insertAdjacentHTML('afterend',
+                    '<p style="color:var(--color-text-secondary);font-size:13px;">图表加载失败</p>');
+            }
+        }
+
+        // ===== 初始化 =====
+        document.addEventListener('DOMContentLoaded', function () {
+            loadAreaChart();
+            loadTrendChart();
+        });
+    </script>
+}

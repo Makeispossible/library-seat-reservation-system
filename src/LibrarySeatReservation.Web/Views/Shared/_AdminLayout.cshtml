@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - 管理后台</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/design-tokens.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/LibrarySeatReservation.Web.styles.css" asp-append-version="true" />
 </head>
@@ -19,13 +20,13 @@
             <div class="collapse navbar-collapse" id="adminNavbar">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Reservations">预约管理</a>
+                        <a class="nav-link@(ViewContext.RouteData.Values["action"]?.ToString() == "Reservations" ? " active" : "")" asp-area="" asp-controller="Admin" asp-action="Reservations">预约管理</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Seats">座位管理</a>
+                        <a class="nav-link@(ViewContext.RouteData.Values["action"]?.ToString() == "Seats" ? " active" : "")" asp-area="" asp-controller="Admin" asp-action="Seats">座位管理</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Stats">统计</a>
+                        <a class="nav-link@(ViewContext.RouteData.Values["action"]?.ToString() == "Stats" ? " active" : "")" asp-area="" asp-controller="Admin" asp-action="Stats">统计</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" asp-area="" asp-controller="Seats" asp-action="Index">返回前台</a>
@@ -42,15 +43,24 @@
         </div>
     </nav>
 
+    <!-- Toast 通知容器 -->
+    <div id="toastContainer" class="toast-container-custom" aria-live="polite" aria-atomic="true"></div>
+
     <!-- TempData 消息 -->
     <div class="admin-container-wide page-container" style="max-width:1400px;">
         @if (TempData["SuccessMessage"] != null)
         {
-            <div class="alert alert-custom-success mb-3">@TempData["SuccessMessage"]</div>
+            <div class="alert alert-custom-success mb-3 alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         }
         @if (TempData["ErrorMessage"] != null)
         {
-            <div class="alert alert-custom-error mb-3">@TempData["ErrorMessage"]</div>
+            <div class="alert alert-custom-error mb-3 alert-dismissible fade show" role="alert">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         }
 
         <main role="main">
@@ -63,6 +73,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

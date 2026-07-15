@@ -272,4 +272,37 @@ public class AdminController : Controller
 
         return View();
     }
+
+    /// <summary>
+    /// 区域分布图表数据（JSON）— 供 Chart.js 使用
+    /// </summary>
+    [AdminAuth]
+    [HttpGet]
+    public IActionResult GetAreaChartData()
+    {
+        var data = _db.Seats
+            .GroupBy(s => s.Area)
+            .Select(g => new { label = g.Key, value = g.Count() })
+            .ToList();
+        return Json(data);
+    }
+
+    /// <summary>
+    /// 近 7 日预约趋势数据（JSON）— 供 Chart.js 使用
+    /// </summary>
+    [AdminAuth]
+    [HttpGet]
+    public IActionResult GetDailyTrendData()
+    {
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var data = Enumerable.Range(0, 7)
+            .Select(offset =>
+            {
+                var date = today.AddDays(-(6 - offset));
+                var count = _db.Reservations.Count(r => r.Date == date);
+                return new { date = date.ToString("MM/dd"), count };
+            })
+            .ToList();
+        return Json(data);
+    }
 }

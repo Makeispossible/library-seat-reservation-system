@@ -1,70 +1,8 @@
 /* ============================================================
-   图书馆座位预约系统 — 自定义样式
-   基于 docs/05-页面卡与UI规范.md 色彩/组件规范
+   图书馆座位预约系统 — 自定义样式 (组件层)
+   Design Tokens 从 design-tokens.css 引入
    ============================================================ */
-
-/* --- CSS Variables (Design Tokens) --- */
-:root {
-  /* 主色调 */
-  --color-primary: #2563eb;
-  --color-primary-light: #dbeafe;
-  --color-primary-dark: #1d4ed8;
-  --color-success: #059669;
-  --color-danger: #dc2626;
-  --color-warning: #d97706;
-
-  /* 状态色 */
-  --status-available-bg: #dcfce7;
-  --status-available-text: #166534;
-  --status-reserved-bg: #fff7ed;
-  --status-reserved-text: #9a3412;
-  --status-inuse-bg: #dbeafe;
-  --status-inuse-text: #1e40af;
-  --status-maintenance-bg: #f1f5f9;
-  --status-maintenance-text: #475569;
-  --status-pending-bg: #dbeafe;
-  --status-pending-text: #1e40af;
-  --status-completed-bg: #f0fdf4;
-  --status-completed-text: #166534;
-  --status-cancelled-bg: #fef2f2;
-  --status-cancelled-text: #991b1b;
-
-  /* 中性色 */
-  --color-bg: #f8fafc;
-  --color-card: #ffffff;
-  --color-text: #1e293b;
-  --color-text-secondary: #64748b;
-  --color-border: #e2e8f0;
-  --color-disabled: #cbd5e1;
-  --color-table-header-bg: #f1f5f9;
-  --color-table-header-text: #475569;
-
-  /* 字号 */
-  --font-size-xs: 12px;
-  --font-size-sm: 14px;
-  --font-size-base: 15px;
-  --font-size-lg: 18px;
-  --font-size-xl: 20px;
-
-  /* 圆角 */
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-
-  /* 间距 */
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 32px;
-
-  /* 阴影 */
-  --shadow-card: 0 1px 3px rgba(0,0,0,0.06);
-  --shadow-hover: 0 4px 12px rgba(0,0,0,0.1);
-
-  /* 导航 */
-  --nav-height: 56px;
-}
+@import url('design-tokens.css');
 
 /* --- Reset & Base --- */
 body {
@@ -569,4 +507,72 @@ body {
   .admin-container-wide {
     max-width: 1400px;
   }
+}
+
+/* --- Toast Notifications --- */
+.toast-container-custom {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 380px;
+  pointer-events: none;
+}
+.toast-custom {
+  background: var(--color-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-toast);
+  pointer-events: auto;
+  transform: translateX(120%);
+  transition: transform var(--toast-duration) cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  border-left: 4px solid var(--color-success);
+}
+.toast-custom.toast-error {
+  border-left-color: var(--color-danger);
+}
+.toast-custom.toast-visible {
+  transform: translateX(0);
+}
+.toast-custom.toast-hiding {
+  transform: translateX(120%);
+  opacity: 0;
+}
+.toast-custom-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  gap: 12px;
+}
+.toast-custom-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+.toast-custom-close:hover {
+  opacity: 1;
+}
+
+/* --- Button Loading State --- */
+.btn-loading[disabled] {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: 0.15em;
 }
