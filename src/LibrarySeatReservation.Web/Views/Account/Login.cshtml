@@ -1,0 +1,48 @@
+@model LoginViewModel
+@{
+    ViewData["Title"] = "登录";
+}
+
+<div class="login-card">
+    <div class="card-custom-static">
+        <div class="text-center mb-4">
+            <div style="font-size:40px;margin-bottom:8px;">🔑</div>
+            <h4>用户登录</h4>
+            <p class="text-secondary" style="font-size:14px;">使用注册的账号登录系统</p>
+        </div>
+
+        <form asp-controller="Account" asp-action="Login" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-custom-error mb-3" role="alert"></div>
+            <input type="hidden" asp-for="ReturnUrl" />
+
+            <div class="mb-3">
+                <label asp-for="Username" class="form-label-custom"></label>
+                <input asp-for="Username" class="form-custom w-100" placeholder="请输入用户名" />
+                <span asp-validation-for="Username" class="form-custom-error"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label-custom"></label>
+                <div class="password-wrapper">
+                    <input asp-for="Password" class="form-custom w-100" placeholder="请输入密码" />
+                    <button type="button" class="password-toggle" aria-label="显示密码" tabindex="-1">
+                        <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </div>
+                <span asp-validation-for="Password" class="form-custom-error"></span>
+            </div>
+            <button type="submit" class="btn btn-custom-primary w-100">登 录</button>
+        </form>
+
+        <div class="text-center mt-3">
+            <span style="font-size:13px;color:var(--color-text-secondary);">还没有账号？</span>
+            <a asp-controller="Account" asp-action="Register" style="font-size:13px;">立即注册</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
