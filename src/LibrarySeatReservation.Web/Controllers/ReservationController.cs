@@ -142,7 +142,7 @@ public class ReservationController : Controller
 
         var nowTime = DateTime.Now.TimeOfDay;
 
-        ViewBag.Reservations = reservations.Select(r => new
+        ViewBag.Reservations = reservations.Select(r => (object)new
         {
             r.Id,
             SeatNumber = r.Seat.SeatNumber,

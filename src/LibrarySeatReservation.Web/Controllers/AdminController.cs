@@ -100,8 +100,8 @@ public class AdminController : Controller
                 r.Status,
                 DisplayStatus = displayStatus,
                 r.CreatedAt,
-                // 可取消条件：状态为 Pending 且（未来日期 或 今天尚未开始）
-                CanCancelAdmin = r.Status == "Pending" && (r.Date > DateOnly.FromDateTime(DateTime.Today) || (r.Date == DateOnly.FromDateTime(DateTime.Today) && DateTime.Now.TimeOfDay < r.StartTime))
+                // 管理员可取消任何 Pending 状态的预约（不限时间）
+                CanCancelAdmin = r.Status == "Pending"
             };
         }).ToList();
 
@@ -145,22 +145,16 @@ public class AdminController : Controller
         var reservation = _db.Reservations.FirstOrDefault(r => r.Id == id);
         if (reservation == null) return NotFound();
 
-        if (reservation.Status != "Pending")
+        if (reservation.Status == "Cancelled")
         {
-            TempData["ErrorMessage"] = "只能取消待开始的预约";
-            return RedirectToAction("Reservations");
-        }
-
-        if (reservation.Date == DateOnly.FromDateTime(DateTime.Today) && DateTime.Now.TimeOfDay >= reservation.StartTime)
-        {
-            TempData["ErrorMessage"] = "已开始的预约无法取消";
+            TempData["ErrorMessage"] = "该预约已被取消";
             return RedirectToAction("Reservations");
         }
 
         reservation.Status = "Cancelled";
         _db.SaveChanges();
 
-        TempData["SuccessMessage"] = $"预约 #{id} 已取消";
+        TempData["SuccessMessage"] = $"预约 #{id} 已取消（管理员操作）";
         return RedirectToAction("Reservations");
     }
 

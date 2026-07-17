@@ -45,5 +45,12 @@ python311/
 test-results/
 .playwright-mcp/
 
+## Test/screenshot artifacts (root level)
+admin-after-cancel.html
+login-page-button.png
+page-home.html
+page-login.html
+page-register.html
+
 ## Project specific
 SecondClassroomManager/

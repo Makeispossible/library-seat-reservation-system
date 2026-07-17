@@ -118,7 +118,19 @@ namespace LibrarySeatReservation.Web.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("PasswordHash")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex(new[] { "Username" }, "IX_StudentUsers_Username")
+                        .IsUnique();
 
                     b.ToTable("StudentUsers", (string)null);
                 });

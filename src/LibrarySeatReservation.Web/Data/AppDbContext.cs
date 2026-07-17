@@ -21,6 +21,9 @@ public class AppDbContext : DbContext
             entity.ToTable("StudentUsers");
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Name).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.Username).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.PasswordHash).HasMaxLength(200);
+            entity.HasIndex(e => e.Username, "IX_StudentUsers_Username").IsUnique();
         });
 
         // === Seats ===

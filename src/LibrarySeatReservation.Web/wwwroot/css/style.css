@@ -566,6 +566,51 @@ body {
   opacity: 1;
 }
 
+/* --- Navbar Button (transparent on colored nav) --- */
+.btn-custom-navbar {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: var(--radius-md);
+  color: #fff;
+  font-weight: 500;
+  transition: background 0.15s;
+  padding: 5px 14px;
+  font-size: var(--font-size-xs);
+}
+.btn-custom-navbar:hover {
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+}
+
+/* --- Password Toggle --- */
+.password-wrapper {
+  position: relative;
+}
+.password-wrapper .form-custom {
+  padding-right: 40px;
+}
+.password-toggle {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 38px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  padding: 0;
+  opacity: 0.65;
+  transition: opacity 0.15s;
+}
+.password-toggle:hover {
+  opacity: 1;
+  color: var(--color-primary);
+}
+
 /* --- Button Loading State --- */
 .btn-loading[disabled] {
   opacity: 0.8;

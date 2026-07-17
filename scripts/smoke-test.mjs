@@ -5,7 +5,7 @@
  * Usage: node scripts/smoke-test.mjs
  */
 
-const BASE = process.env.BASE_URL || 'http://localhost:5211';
+const BASE = process.env.BASE_URL || 'http://localhost:5207';
 
 const tests = [
   { name: 'Home',              url: '/',                     expect: /座位预约/ },

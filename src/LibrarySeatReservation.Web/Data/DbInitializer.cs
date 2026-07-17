@@ -9,20 +9,16 @@ public static class DbInitializer
 {
     public static void Initialize(AppDbContext db)
     {
-        // 如果数据库已创建且有数据，跳过
-        if (db.StudentUsers.Any()) return;
-
-        // === 种子数据：5 个体验学生 ===
-        var students = new List<StudentUser>
+        // 清理旧版体验账号（Username 为空的旧数据）
+        var oldUsers = db.StudentUsers.Where(u => string.IsNullOrEmpty(u.Username)).ToList();
+        if (oldUsers.Any())
         {
-            new() { Name = "学生A" },
-            new() { Name = "学生B" },
-            new() { Name = "学生C" },
-            new() { Name = "学生D" },
-            new() { Name = "学生E" },
-        };
-        db.StudentUsers.AddRange(students);
-        db.SaveChanges();
+            db.StudentUsers.RemoveRange(oldUsers);
+            db.SaveChanges();
+        }
+
+        // 如果已有正式用户，跳过
+        if (db.StudentUsers.Any()) return;
 
         // === 种子数据：12 个座位（3 区域 × 4 座位） ===
         var seats = new List<Seat>

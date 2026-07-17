@@ -17,32 +17,14 @@ public class HomeController : Controller
     }
 
     /// <summary>
-    /// 用户首页 — 显示学生列表供切换账号
+    /// 首页 — 根据登录状态显示不同内容
     /// </summary>
     public IActionResult Index()
     {
-        ViewBag.StudentUsers = _db.StudentUsers.OrderBy(u => u.Id).ToList();
-        ViewBag.CurrentUser = HttpContext.Session.GetString("UserName") ?? "未选择";
+        var userId = HttpContext.Session.GetInt32("UserId");
+        ViewBag.IsLoggedIn = userId.HasValue;
+        ViewBag.CurrentUser = HttpContext.Session.GetString("UserName") ?? "";
         return View();
-    }
-
-    /// <summary>
-    /// 切换体验账号 — POST 接收 userId，写入 Session
-    /// </summary>
-    [HttpPost]
-    public IActionResult SwitchUser(int? userId)
-    {
-        if (userId.HasValue)
-        {
-            var user = _db.StudentUsers.FirstOrDefault(u => u.Id == userId.Value);
-            if (user != null)
-            {
-                HttpContext.Session.SetInt32("UserId", user.Id);
-                HttpContext.Session.SetString("UserName", user.Name);
-            }
-        }
-
-        return RedirectToAction("Index");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
