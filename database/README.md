@@ -6,13 +6,17 @@
 
 | 项目 | 内容 |
 |------|------|
-| 数据库系统 | SQL Server LocalDB（Visual Studio 内置） |
+| 主数据库系统 | SQL Server LocalDB（Visual Studio 内置） |
+| 可选数据库 | MySQL 8.4（本地已安装，可手动切换） |
 | ORM | Entity Framework Core 9.x（Code First） |
 | 连接字符串 | `appsettings.json` 中 `ConnectionStrings:DefaultConnection` |
 | 目标数据库名 | `LibrarySeatReservation` |
 
 > **降级方案**：若 LocalDB 不可用，可将 `Program.cs` 中 `UseSqlServer` 替换为 `UseSqlite`，
 > 连接字符串改为 `Data Source=LibrarySeat.db`，其余代码无需修改。
+
+> **MySQL 方案**：本地已安装 MySQL 8.4（`localhost:3306`，root 无密码），
+> 数据库 `LibrarySeatReservation` 数据已从 SQL Server 迁移完成。
 
 ---
 
@@ -52,9 +56,31 @@ DbInitializer.Initialize(db);  // 写入种子数据
 
 | 表名 | 说明 | 主要字段 |
 |------|------|---------|
-| `StudentUsers` | 学生体验账号 | Id, Name |
+| `StudentUsers` | 系统用户（含注册用户） | Id, Name, Username, PasswordHash |
 | `Seats` | 座位信息 | Id, SeatNumber, Area, Floor, Status |
 | `Reservations` | 预约记录 | Id, SeatId, StudentUserId, Date, StartTime, EndTime, Status, CreatedAt |
+
+### 字段说明
+
+| 表 | 字段 | 类型 | 说明 |
+|----|------|------|------|
+| StudentUsers | Id | int (PK) | 自增主键 |
+| | Name | nvarchar | 展示名称 |
+| | Username | nvarchar | 登录用户名（注册时填写） |
+| | PasswordHash | nvarchar | BCrypt 密码哈希（注册用户非空） |
+| Seats | Id | int (PK) | 自增主键 |
+| | SeatNumber | nvarchar | 座位编号（如 A-01） |
+| | Area | nvarchar | 区域（如一楼大厅） |
+| | Floor | nvarchar | 楼层（如 1F） |
+| | Status | nvarchar | `Available` / `Maintenance` |
+| Reservations | Id | int (PK) | 自增主键 |
+| | StudentUserId | int (FK) | 关联 StudentUsers |
+| | SeatId | int (FK) | 关联 Seats |
+| | Date | date | 预约日期 |
+| | StartTime | time | 开始时段 |
+| | EndTime | time | 结束时段 |
+| | Status | nvarchar | `Pending` / `Cancelled` |
+| | CreatedAt | datetime2 | 创建时间，默认 GETDATE() |
 
 ### 索引
 
@@ -86,16 +112,6 @@ DbInitializer.Initialize(db);  // 写入种子数据
 
 ### 种子数据内容
 
-#### 体验学生（5 个）
-
-| Name |
-|------|
-| 学生A |
-| 学生B |
-| 学生C |
-| 学生D |
-| 学生E |
-
 #### 座位（12 个，3 区域 × 4 座位）
 
 | 座位编号 | 区域 | 楼层 | 初始状态 |
@@ -103,6 +119,14 @@ DbInitializer.Initialize(db);  // 写入种子数据
 | A-01 ~ A-04 | 一楼大厅 | 1F | Available |
 | B-01 ~ B-04 | 二楼阅览室 | 2F | Available |
 | C-01 ~ C-04 | 三楼自习区 | 3F | Available |
+
+> 实际数据库中座位数量可能多于 12 个（种子数据被多次执行追加），不影响功能。
+
+#### 学生用户（无种子数据）
+
+项目**不再写入种子学生账号**。体验账号（"学生A"~"学生E"）在首页下拉框中通过 Session 模拟，不存储在数据库中。
+
+注册用户通过 `/Account/Register` 页面创建，存储在 `StudentUsers` 表，密码经 BCrypt 哈希后存入 `PasswordHash` 字段。
 
 #### 预约记录
 
@@ -114,7 +138,8 @@ DbInitializer.Initialize(db);  // 写入种子数据
 
 | 角色 | 账号 | 说明 |
 |------|------|------|
-| 学生体验账号 | 学生A ~ 学生E | 首页下拉框切换，无需密码 |
+| 学生体验账号 | 学生A ~ 学生E | 首页下拉框切换，无需密码，不存 DB |
+| 注册用户 | 通过 `/Account/Register` 创建 | 需填写用户名和密码 |
 | 管理员 | admin / admin123 | 访问 `/Admin/Login` 登录 |
 
 管理员账号由 `AdminController.Login` 中的硬编码校验，不存储在数据库中。
@@ -129,7 +154,7 @@ DbInitializer.Initialize(db);  // 写入种子数据
 
 ### 已创建迁移
 
-首次通过 `dotnet ef migrations add InitialCreate` 创建。
+首次通过 `dotnet ef migrations add InitialCreate` 创建。后续通过 `dotnet ef migrations add AddUserAuth` 添加了用户名字段和密码哈希支持。
 
 ### 如需修改模型
 
